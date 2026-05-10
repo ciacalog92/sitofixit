@@ -9,6 +9,12 @@ export type Stage = {
   status: StageStatus;
 };
 
+export type TicketOutcome =
+  | "in_progress"
+  | "delivered"
+  | "not_repairable"
+  | "cancelled";
+
 export type Ticket = {
   code: string;
   device: string;
@@ -17,6 +23,11 @@ export type Ticket = {
   estimatedReady: string;
   notes: string | null;
   stages: Stage[];
+  outcome?: TicketOutcome;
+  priority?: "normale" | "urgente";
+  quoteEur?: number | null;
+  finalEur?: number | null;
+  warrantyDays?: number | null;
 };
 
 export type Grade = "A+" | "A" | "B";

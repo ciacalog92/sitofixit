@@ -1,148 +1,252 @@
-import { supabase } from "../supabase";
-import { buildStages, STAGE_DEFS } from "./stages";
-import type { GestionaleAdapter, Grade, RefurbishedPhone, Ticket } from "./types";
+import { supabaseAdmin as supabase } from "../supabase-admin";
+import { buildStages } from "./stages";
+import type {
+  GestionaleAdapter,
+  Grade,
+  RefurbishedPhone,
+  Ticket,
+  TicketOutcome,
+} from "./types";
 
 /**
- * Adapter Supabase — legge tickets e ricondizionati da un database Supabase.
+ * Adapter Supabase per Fixit (schema reale).
  *
- * Variabili richieste:
- *   NEXT_PUBLIC_SUPABASE_URL      URL del progetto (es. https://xxxx.supabase.co)
- *   SUPABASE_SERVICE_ROLE_KEY     chiave service-role (server-only, mai esposta al browser)
+ * Tabelle coinvolte:
+ *   riparazioni  ← pratica/ticket (codice = numero_pratica, es. "LAB-2026-0011")
+ *   clienti       ← FK riparazioni.cliente_id
+ *   dispositivi   ← FK riparazioni.dispositivo_id
+ *   ricondizionati (opzionale, per la pagina /ricondizionati)
  *
- * Variabili opzionali — nomi tabelle/colonne (defaults qui sotto):
- *   SUPABASE_TICKETS_TABLE        default: "tickets"
- *   SUPABASE_REFURB_TABLE         default: "ricondizionati"
+ * Variabili richieste in `.env.local`:
+ *   NEXT_PUBLIC_SUPABASE_URL
+ *   NEXT_PUBLIC_SUPABASE_ANON_KEY
  *
- * Schema atteso per la tabella TICKETS:
- *   codice          text  (es. "FX-2056")   ← SUPABASE_TICKET_COL_CODE
- *   device          text
- *   servizio        text                    ← SUPABASE_TICKET_COL_SERVICE
- *   cliente         text                    ← SUPABASE_TICKET_COL_CUSTOMER
- *   stato           text  (es. "repairing") ← SUPABASE_TICKET_COL_STATUS
- *   stima_ritiro    text                    ← SUPABASE_TICKET_COL_ETA
- *   note            text  (nullable)
- *
- * Schema atteso per la tabella RICONDIZIONATI:
- *   id              text/uuid
- *   brand           text
- *   modello         text                    ← SUPABASE_REFURB_COL_MODEL
- *   storage         text
- *   colore          text (nullable)         ← SUPABASE_REFURB_COL_COLOR
- *   prezzo          numeric                 ← SUPABASE_REFURB_COL_PRICE
- *   grado           text  ("A", "A+", "B") ← SUPABASE_REFURB_COL_GRADE
- *   batteria        text  (es. "92%")      ← SUPABASE_REFURB_COL_BATTERY
- *   immagine_url    text (nullable)         ← SUPABASE_REFURB_COL_IMAGE
- *   disponibile     boolean                 ← SUPABASE_REFURB_COL_AVAIL
- *
- * Se i nomi delle colonne nel tuo DB differiscono, impostali via env
- * oppure modificali nelle costanti TICKET_COLS / REFURB_COLS qui sotto.
+ * Le RLS policy su Supabase devono permettere SELECT pubblico
+ * sulle righe esposte (oppure usa SUPABASE_SERVICE_ROLE_KEY lato server).
  */
 
-const env = (k: string, fallback = "") => (process.env[k] ?? fallback).trim();
-
-// --- nomi tabelle -------------------------------------------------------
-const TICKETS_TABLE = env("SUPABASE_TICKETS_TABLE", "tickets");
-const REFURB_TABLE = env("SUPABASE_REFURB_TABLE", "ricondizionati");
-
-// --- mapping colonne tickets ---------------------------------------------
-const TICKET_COLS = {
-  code: env("SUPABASE_TICKET_COL_CODE", "codice"),
-  device: env("SUPABASE_TICKET_COL_DEVICE", "device"),
-  service: env("SUPABASE_TICKET_COL_SERVICE", "servizio"),
-  customer: env("SUPABASE_TICKET_COL_CUSTOMER", "cliente"),
-  status: env("SUPABASE_TICKET_COL_STATUS", "stato"),
-  eta: env("SUPABASE_TICKET_COL_ETA", "stima_ritiro"),
-  notes: env("SUPABASE_TICKET_COL_NOTES", "note"),
+// === STATO → INDICE FASE ====================================================
+// Le 8 fasi della UI sono:
+//  0 ricezione · 1 diagnosi · 2 preventivo · 3 approvato
+//  4 in riparazione · 5 qc · 6 pronto · 7 consegnato
+const STATO_TO_INDEX: Record<string, number> = {
+  in_attesa: 0,
+  ricevuto: 0,
+  in_diagnosi: 1,
+  diagnosi: 1,
+  preventivo: 2,
+  preventivato: 2,
+  approvato: 3,
+  in_riparazione: 4,
+  in_lavorazione: 4,
+  in_test: 5,
+  pronto: 6,
+  consegnato: 7,
+  // stati terminali speciali (gestiti via outcome, l'indice è solo indicativo)
+  non_riparabile: 1,
+  annullato: 0,
 };
 
-// --- mapping colonne ricondizionati --------------------------------------
-const REFURB_COLS = {
-  id: env("SUPABASE_REFURB_COL_ID", "id"),
-  brand: env("SUPABASE_REFURB_COL_BRAND", "brand"),
-  model: env("SUPABASE_REFURB_COL_MODEL", "modello"),
-  storage: env("SUPABASE_REFURB_COL_STORAGE", "storage"),
-  color: env("SUPABASE_REFURB_COL_COLOR", "colore"),
-  price: env("SUPABASE_REFURB_COL_PRICE", "prezzo"),
-  grade: env("SUPABASE_REFURB_COL_GRADE", "grado"),
-  battery: env("SUPABASE_REFURB_COL_BATTERY", "batteria"),
-  image: env("SUPABASE_REFURB_COL_IMAGE", "immagine_url"),
-  available: env("SUPABASE_REFURB_COL_AVAIL", "disponibile"),
-};
-
-// --- mappa stato testuale → indice fase ---------------------------------
-const STATUS_MAP: Record<string, number> = {
-  received: 0, "preso in carico": 0, ricezione: 0,
-  diagnosis: 1, diagnosi: 1, "in diagnosi": 1,
-  quote: 2, preventivo: 2, "preventivo inviato": 2,
-  approved: 3, approvato: 3, "preventivo approvato": 3,
-  repairing: 4, "in riparazione": 4, "in lavorazione": 4,
-  qc: 5, "test qc": 5, collaudo: 5,
-  ready: 6, pronto: 6, "pronto per il ritiro": 6,
-  delivered: 7, consegnato: 7, completato: 7,
-};
-
-function statusToIndex(s: string | null | undefined): number {
-  if (!s) return 0;
-  const k = s.toLowerCase().trim();
-  if (k in STATUS_MAP) return STATUS_MAP[k];
-  const i = STAGE_DEFS.findIndex((d) => d.id === k);
-  return i >= 0 ? i : 0;
+function statoToIndex(stato: string | null | undefined): number {
+  if (!stato) return 0;
+  const k = stato.toLowerCase().trim();
+  return k in STATO_TO_INDEX ? STATO_TO_INDEX[k] : 0;
 }
 
-function gradeOf(v: unknown): Grade {
-  const s = String(v ?? "").toUpperCase().replace(/\s+/g, "");
-  if (s === "A+" || s === "APLUS") return "A+";
-  if (s === "B") return "B";
-  return "A";
+function outcomeFor(stato: string | null | undefined): TicketOutcome {
+  switch ((stato ?? "").toLowerCase()) {
+    case "non_riparabile":
+      return "not_repairable";
+    case "annullato":
+      return "cancelled";
+    case "consegnato":
+      return "delivered";
+    default:
+      return "in_progress";
+  }
 }
 
+// === FORMATTAZIONE DATE/CAMPI ==============================================
+function formatDate(d: string | null | undefined): string {
+  if (!d) return "—";
+  // Supabase può restituire "2026-05-08" o ISO. Accetto entrambi.
+  const parsed = new Date(d);
+  if (Number.isNaN(parsed.getTime())) return d;
+  return parsed.toLocaleDateString("it-IT", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function joinNonEmpty(parts: Array<string | null | undefined>, sep = " "): string {
+  return parts.map((p) => (p ?? "").trim()).filter(Boolean).join(sep);
+}
+
+type ClienteRow = {
+  nome?: string | null;
+  cognome?: string | null;
+  ragione_sociale?: string | null;
+  full_name?: string | null;
+};
+type DispositivoRow = {
+  marca?: string | null;
+  brand?: string | null;
+  produttore?: string | null;
+  modello?: string | null;
+  model?: string | null;
+  colore?: string | null;
+  storage?: string | null;
+};
+
+function formatCliente(c: ClienteRow | null | undefined, fallback: string): string {
+  if (!c) return fallback;
+  if (c.full_name) return String(c.full_name);
+  if (c.ragione_sociale) return String(c.ragione_sociale);
+  // privacy: mostriamo solo iniziali del cognome
+  const nome = (c.nome ?? "").trim();
+  const cognome = (c.cognome ?? "").trim();
+  if (nome && cognome) return `${nome} ${cognome[0]}.`;
+  return joinNonEmpty([nome, cognome]) || fallback;
+}
+
+function formatDispositivo(
+  d: DispositivoRow | null | undefined,
+  fallback: string,
+): string {
+  if (!d) return fallback;
+  const brand = d.marca ?? d.brand ?? d.produttore ?? "";
+  const model = d.modello ?? d.model ?? "";
+  const out = joinNonEmpty([brand, model]) || fallback;
+  return out;
+}
+
+// === RIPARAZIONI ============================================================
+type RiparazioneRow = {
+  id: string;
+  numero_pratica: string;
+  cliente_id: string | null;
+  dispositivo_id: string | null;
+  stato: string | null;
+  priorita: "normale" | "urgente" | null;
+  problema_dichiarato: string | null;
+  diagnosi: string | null;
+  intervento_effettuato: string | null;
+  preventivo_euro: number | string | null;
+  costo_finale_euro: number | string | null;
+  data_prevista_consegna: string | null;
+  data_consegna: string | null;
+  garanzia_giorni: number | null;
+  // Relazioni embed (Supabase FK)
+  clienti?: ClienteRow | null;
+  dispositivi?: DispositivoRow | null;
+};
+
+// Tenta select con embed FK; se fallisce (FK non definita), retry senza embed
+async function fetchRiparazione(code: string): Promise<RiparazioneRow | null> {
+  const SELECT_WITH_REL =
+    "*, clienti(nome, cognome, ragione_sociale), dispositivi(marca, modello, colore, storage)";
+  const SELECT_PLAIN = "*";
+
+  let res = await supabase
+    .from("riparazioni")
+    .select(SELECT_WITH_REL)
+    .eq("numero_pratica", code)
+    .maybeSingle();
+
+  if (res.error) {
+    // FK probabilmente non definita o RLS che blocca le tabelle correlate
+    res = await supabase
+      .from("riparazioni")
+      .select(SELECT_PLAIN)
+      .eq("numero_pratica", code)
+      .maybeSingle();
+  }
+
+  if (res.error || !res.data) return null;
+  return res.data as unknown as RiparazioneRow;
+}
+
+function num(v: unknown): number | null {
+  if (v == null || v === "") return null;
+  const n = typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+}
+
+// === ADAPTER ===============================================================
 export const supabaseAdapter: GestionaleAdapter = {
   name: "supabase",
 
   async getTicket(code) {
-    const { data, error } = await supabase
-      .from(TICKETS_TABLE)
-      .select("*")
-      .eq(TICKET_COLS.code, code)
-      .limit(1)
-      .maybeSingle();
+    const row = await fetchRiparazione(code);
+    if (!row) return null;
 
-    if (error || !data) return null;
+    const customer = formatCliente(row.clienti, "Cliente");
+    const device = formatDispositivo(row.dispositivi, "Dispositivo");
+    const stato = row.stato ?? "";
+    const outcome = outcomeFor(stato);
+
+    // ETA: se consegnato, mostra la data di consegna; altrimenti la prevista
+    const eta =
+      outcome === "delivered"
+        ? `Consegnato · ${formatDate(row.data_consegna ?? row.data_prevista_consegna)}`
+        : outcome === "not_repairable"
+          ? "Device non riparabile"
+          : outcome === "cancelled"
+            ? "Pratica annullata"
+            : row.data_prevista_consegna
+              ? `Prevista · ${formatDate(row.data_prevista_consegna)}`
+              : "In definizione";
+
+    // Note: preferiamo l'intervento effettuato, poi la diagnosi
+    const notes =
+      (row.intervento_effettuato && String(row.intervento_effettuato).trim()) ||
+      (row.diagnosi && String(row.diagnosi).trim()) ||
+      null;
 
     const ticket: Ticket = {
-      code: String(data[TICKET_COLS.code] ?? code),
-      device: String(data[TICKET_COLS.device] ?? "—"),
-      service: String(data[TICKET_COLS.service] ?? "—"),
-      customer: String(data[TICKET_COLS.customer] ?? "—"),
-      estimatedReady: String(data[TICKET_COLS.eta] ?? "—"),
-      notes: data[TICKET_COLS.notes] ? String(data[TICKET_COLS.notes]) : null,
-      stages: buildStages(statusToIndex(data[TICKET_COLS.status] as string)),
+      code: row.numero_pratica,
+      device,
+      service:
+        row.problema_dichiarato?.trim() ||
+        row.intervento_effettuato?.trim() ||
+        "Riparazione in corso",
+      customer,
+      estimatedReady: eta,
+      notes,
+      stages: buildStages(statoToIndex(stato)),
+      outcome,
+      priority: row.priorita ?? undefined,
+      quoteEur: num(row.preventivo_euro),
+      finalEur: num(row.costo_finale_euro),
+      warrantyDays: row.garanzia_giorni ?? null,
     };
     return ticket;
   },
 
   async listRefurbished() {
+    // Tabella opzionale: se non esiste, restituisco lista vuota.
     const { data, error } = await supabase
-      .from(REFURB_TABLE)
+      .from("ricondizionati")
       .select("*")
-      .eq(REFURB_COLS.available, true)
-      .order(REFURB_COLS.brand, { ascending: true });
+      .eq("disponibile", true);
 
     if (error || !data) return [];
 
-    return data.map((row): RefurbishedPhone => {
-      const price = Number(row[REFURB_COLS.price] ?? 0);
+    return data.map((r): RefurbishedPhone => {
+      const price = Number(r.prezzo ?? r.price ?? 0);
+      const grade = String(r.grado ?? r.grade ?? "A").toUpperCase().replace(/\s+/g, "");
       return {
-        id: String(row[REFURB_COLS.id] ?? crypto.randomUUID()),
-        brand: String(row[REFURB_COLS.brand] ?? "—"),
-        model: String(row[REFURB_COLS.model] ?? "—"),
-        storage: String(row[REFURB_COLS.storage] ?? ""),
-        color: row[REFURB_COLS.color] ? String(row[REFURB_COLS.color]) : undefined,
+        id: String(r.id ?? crypto.randomUUID()),
+        brand: String(r.brand ?? r.marca ?? "—"),
+        model: String(r.modello ?? r.model ?? "—"),
+        storage: String(r.storage ?? ""),
+        color: r.colore || r.color || undefined,
         price: Number.isFinite(price) ? price : 0,
         priceLabel: price ? `€ ${Math.round(price)}` : undefined,
-        grade: gradeOf(row[REFURB_COLS.grade]),
-        battery: String(row[REFURB_COLS.battery] ?? "—"),
-        imageUrl: row[REFURB_COLS.image] ? String(row[REFURB_COLS.image]) : null,
+        grade: (grade === "A+" ? "A+" : grade === "B" ? "B" : "A") as Grade,
+        battery: String(r.batteria ?? r.battery ?? "—"),
+        imageUrl: r.immagine_url ?? r.image_url ?? null,
         available: true,
       };
     });

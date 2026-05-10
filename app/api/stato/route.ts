@@ -16,11 +16,12 @@ export async function GET(req: Request) {
     );
   }
 
-  if (!/^[A-Z]{1,4}-?\d{3,8}$/.test(code)) {
+  // Accetta sia il formato breve (FX-2056) sia il formato esteso (LAB-2026-0011).
+  if (!/^[A-Z]{1,6}(?:-\d{2,4}){1,3}$/.test(code) && !/^[A-Z]{1,6}-?\d{3,8}$/.test(code)) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Formato codice non valido. Usa il formato sulla ricevuta (es. FX-2056).",
+        error: "Formato codice non valido. Usa il codice sulla ricevuta (es. LAB-2026-0011).",
       },
       { status: 400 },
     );

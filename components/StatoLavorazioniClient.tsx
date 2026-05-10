@@ -10,6 +10,8 @@ type Stage = {
   status: "done" | "active" | "pending";
 };
 
+type TicketOutcome = "in_progress" | "delivered" | "not_repairable" | "cancelled";
+
 type Ticket = {
   code: string;
   device: string;
@@ -18,6 +20,11 @@ type Ticket = {
   estimatedReady: string;
   notes: string | null;
   stages: Stage[];
+  outcome?: TicketOutcome;
+  priority?: "normale" | "urgente";
+  quoteEur?: number | null;
+  finalEur?: number | null;
+  warrantyDays?: number | null;
 };
 
 type ApiResponse =
@@ -111,9 +118,9 @@ export function StatoLavorazioniClient() {
 
       {!ticket && !error && (
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 text-sm text-white/60">
-          <p className="font-medium text-white/80">Codici demo per il test:</p>
+          <p className="font-medium text-white/80">Codici di esempio:</p>
           <ul className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {["FX-1001", "FX-2056", "FX-3120", "FX-4099", "FX-5050"].map((c) => (
+            {["LAB-2026-0011", "LAB-2026-0014", "LAB-2026-0017", "LAB-2026-0018"].map((c) => (
               <li key={c}>
                 <button
                   type="button"
@@ -132,6 +139,10 @@ export function StatoLavorazioniClient() {
 }
 
 function TicketView({ ticket }: { ticket: Ticket }) {
+  const isTerminal =
+    ticket.outcome === "not_repairable" || ticket.outcome === "cancelled";
+  const isDelivered = ticket.outcome === "delivered";
+
   return (
     <article className="card relative overflow-hidden">
       <div className="pointer-events-none absolute -top-1/2 -right-1/2 h-full w-full rounded-full bg-gradient-to-br from-neon-violet/25 to-transparent blur-3xl" />
@@ -141,16 +152,48 @@ function TicketView({ ticket }: { ticket: Ticket }) {
             <span className="h-1.5 w-1.5 rounded-full bg-neon-cyan animate-pulseNeon" />
             Pratica · Live dal gestionale
           </span>
-          <span className="font-mono text-sm text-white/70">{ticket.code}</span>
+          <div className="flex items-center gap-2">
+            {ticket.priority === "urgente" && (
+              <span className="chip border border-neon-pink/50 text-neon-pink">
+                Urgente
+              </span>
+            )}
+            <span className="font-mono text-sm text-white/70">{ticket.code}</span>
+          </div>
         </div>
+
+        {isTerminal && (
+          <OutcomeBanner outcome={ticket.outcome!} />
+        )}
+        {isDelivered && <DeliveredBanner />}
+
         <h3 className="mt-4 text-2xl font-bold text-white">{ticket.device}</h3>
         <p className="mt-1 text-white/70">{ticket.service}</p>
 
         <dl className="mt-5 grid gap-3 sm:grid-cols-3">
           <Info label="Cliente" value={ticket.customer} />
-          <Info label="Stima pronto" value={ticket.estimatedReady} icon={<ClockIcon />} />
-          <Info label="Note" value={ticket.notes ?? "—"} />
+          <Info
+            label={isDelivered ? "Consegnato" : isTerminal ? "Stato" : "Stima pronto"}
+            value={ticket.estimatedReady}
+            icon={<ClockIcon />}
+          />
+          <Info label="Note tecnico" value={ticket.notes ?? "—"} />
         </dl>
+
+        {(ticket.quoteEur != null ||
+          ticket.finalEur != null ||
+          ticket.warrantyDays != null) && (
+          <dl className="mt-3 grid gap-3 sm:grid-cols-3">
+            {ticket.finalEur != null ? (
+              <Info label="Costo finale" value={`€ ${ticket.finalEur.toFixed(2)}`} />
+            ) : ticket.quoteEur != null ? (
+              <Info label="Preventivo" value={`€ ${ticket.quoteEur.toFixed(2)}`} />
+            ) : null}
+            {ticket.warrantyDays != null && ticket.warrantyDays > 0 && (
+              <Info label="Garanzia" value={`${ticket.warrantyDays} giorni`} />
+            )}
+          </dl>
+        )}
 
         <ol className="mt-8 space-y-4">
           {ticket.stages.map((s, idx) => (
@@ -226,6 +269,40 @@ function Info({
         {icon && <span className="text-neon-cyan">{icon}</span>}
         <span className="truncate">{value}</span>
       </dd>
+    </div>
+  );
+}
+
+function OutcomeBanner({ outcome }: { outcome: TicketOutcome }) {
+  const isCancel = outcome === "cancelled";
+  return (
+    <div
+      className={`mt-4 rounded-xl border p-3 sm:p-4 ${
+        isCancel
+          ? "border-white/20 bg-white/5 text-white/80"
+          : "border-neon-pink/40 bg-neon-pink/10 text-neon-pink"
+      }`}
+      role="status"
+    >
+      <p className="font-semibold">
+        {isCancel ? "Pratica annullata" : "Dispositivo non riparabile"}
+      </p>
+      <p className={`mt-1 text-sm ${isCancel ? "text-white/65" : "text-neon-pink/80"}`}>
+        {isCancel
+          ? "Questa pratica è stata annullata. Contattaci per maggiori informazioni."
+          : "Dopo la diagnosi non è stato possibile procedere con la riparazione. Il device ti verrà restituito."}
+      </p>
+    </div>
+  );
+}
+
+function DeliveredBanner() {
+  return (
+    <div className="mt-4 rounded-xl border border-neon-cyan/40 bg-neon-cyan/10 p-3 sm:p-4 text-neon-cyan" role="status">
+      <p className="font-semibold">Riparazione conclusa e device consegnato</p>
+      <p className="mt-1 text-sm text-neon-cyan/80">
+        Grazie per averci scelto. Conserva il codice pratica per eventuale garanzia.
+      </p>
     </div>
   );
 }
