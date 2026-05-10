@@ -1,26 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" role="img" aria-label="Fixit Repair Express">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" aria-label="Fixit Repair Express">
   <defs>
-    <linearGradient id="neonGrad" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#22e0ff"/>
       <stop offset="50%" stop-color="#9b5cff"/>
       <stop offset="100%" stop-color="#ff3df0"/>
     </linearGradient>
+    <linearGradient id="ringGrad2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff3df0"/>
+      <stop offset="50%" stop-color="#9b5cff"/>
+      <stop offset="100%" stop-color="#22e0ff"/>
+    </linearGradient>
+    <linearGradient id="phoneGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22e0ff"/>
+      <stop offset="55%" stop-color="#9b5cff"/>
+      <stop offset="100%" stop-color="#ff3df0"/>
+    </linearGradient>
     <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="b"/>
-      <feMerge>
-        <feMergeNode in="b"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
-  <rect width="600" height="200" fill="#05050a"/>
-  <g filter="url(#glow)" stroke="url(#neonGrad)" stroke-width="3" fill="none">
-    <path d="M52 60 l28 -16 l28 16 v80 l-28 16 l-28 -16 z"/>
-    <path d="M80 44 v112"/>
-    <path d="M52 100 h56"/>
+
+  <rect width="720" height="360" fill="#05050a"/>
+
+  <!-- Mark: smartphone tilted with two orbital rings -->
+  <g transform="translate(360 150)" filter="url(#glow)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Phone (rotated) -->
+    <g transform="rotate(-22)" stroke="url(#phoneGrad)" stroke-width="3.2">
+      <rect x="-46" y="-78" width="92" height="156" rx="16"/>
+      <line x1="-12" y1="-66" x2="12" y2="-66"/>
+      <line x1="-10" y1="68" x2="10" y2="68"/>
+    </g>
+    <!-- Orbits -->
+    <g stroke-width="4">
+      <ellipse cx="0" cy="0" rx="120" ry="48" transform="rotate(28)" stroke="url(#ringGrad)"/>
+      <ellipse cx="0" cy="0" rx="120" ry="48" transform="rotate(-28)" stroke="url(#ringGrad2)"/>
+    </g>
   </g>
-  <g font-family="'Space Grotesk', Inter, sans-serif" font-weight="700" filter="url(#glow)">
-    <text x="140" y="108" font-size="64" fill="url(#neonGrad)" letter-spacing="2">FIXIT</text>
-    <text x="140" y="148" font-size="22" fill="#22e0ff" letter-spacing="6">REPAIR EXPRESS</text>
+
+  <!-- Wordmark -->
+  <g font-family="'Space Grotesk', Inter, sans-serif" filter="url(#glow)" text-anchor="middle">
+    <text x="360" y="270" font-size="56" font-weight="300" fill="#ffffff" letter-spacing="6">FIXIT REPAIR</text>
+    <text x="360" y="312" font-size="22" font-weight="400" fill="#22e0ff" letter-spacing="14">EXPRESS</text>
   </g>
 </svg>

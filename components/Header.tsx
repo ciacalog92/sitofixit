@@ -18,7 +18,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-xl">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Logo variant="mark" width={36} height={36} priority className="sm:hidden" />
-        <Logo variant="full" width={150} height={50} priority className="hidden sm:block" />
+        <Logo variant="full" width={150} height={75} priority className="hidden sm:block h-12 w-auto" />
 
         <nav className="hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
