@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PromoBanner } from "@/components/PromoBanner";
 import { Hero } from "@/components/Hero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ServiceCard } from "@/components/ServiceCard";
@@ -16,6 +17,7 @@ import {
 export default function HomePage() {
   return (
     <>
+      <PromoBanner />
       <Hero />
 
       {/* Sezioni servizi */}
