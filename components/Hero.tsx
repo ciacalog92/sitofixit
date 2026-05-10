@@ -46,7 +46,7 @@ export function Hero() {
             <div className="relative mx-auto aspect-square w-full max-w-md">
               <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-neon-cyan/20 via-neon-violet/20 to-neon-pink/20 blur-2xl" />
               <div className="relative h-full w-full rounded-[2rem] neon-border glass p-6 sm:p-10 flex items-center justify-center scanline overflow-hidden">
-                <Logo variant="full" width={420} height={210} className="w-full h-auto animate-pulseNeon" priority />
+                <Logo variant="full" width={520} height={390} className="w-full h-auto animate-pulseNeon" priority />
               </div>
               <div className="pointer-events-none absolute -bottom-4 -right-4 hidden sm:block">
                 <span className="chip backdrop-blur">Premium · Tech</span>

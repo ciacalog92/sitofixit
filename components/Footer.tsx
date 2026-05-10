@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="mt-20 border-t border-white/5 bg-black/60">
       <div className="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-4">
-          <Logo variant="full" width={180} height={90} />
+          <Logo variant="full" width={220} height={165} className="h-20 w-auto" />
           <p className="text-sm text-white/60 max-w-xs">
             Riparazioni rapide, accessori premium e smartphone ricondizionati
             con garanzia. Fixit Repair Express, la tua officina tech.
