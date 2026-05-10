@@ -13,12 +13,12 @@
   </defs>
   <rect width="64" height="64" rx="14" fill="#05050a"/>
   <g transform="translate(32 32)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <g transform="rotate(-22)" stroke="url(#r1)" stroke-width="2.2">
-      <rect x="-9" y="-15" width="18" height="30" rx="3.6"/>
+    <g transform="rotate(-22)" stroke="url(#r1)" stroke-width="3">
+      <rect x="-9" y="-16" width="18" height="32" rx="4"/>
     </g>
-    <g stroke-width="2.6">
-      <ellipse cx="0" cy="0" rx="24" ry="10" transform="rotate(28)" stroke="url(#r1)"/>
-      <ellipse cx="0" cy="0" rx="24" ry="10" transform="rotate(-28)" stroke="url(#r2)"/>
+    <g stroke-width="3.4">
+      <ellipse cx="0" cy="0" rx="25" ry="10" transform="rotate(28)" stroke="url(#r1)"/>
+      <ellipse cx="0" cy="0" rx="25" ry="10" transform="rotate(-28)" stroke="url(#r2)"/>
     </g>
   </g>
 </svg>
