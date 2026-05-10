@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  background: #05050a;
+  color: #e8e8f4;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-image:
+    radial-gradient(60% 40% at 50% -10%, rgba(155,92,255,0.22), transparent 60%),
+    radial-gradient(40% 30% at 90% 10%, rgba(255,61,240,0.15), transparent 60%),
+    radial-gradient(40% 30% at 10% 20%, rgba(34,224,255,0.18), transparent 60%);
+  background-attachment: fixed;
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .neon-text {
+    background: linear-gradient(90deg, #22e0ff 0%, #9b5cff 50%, #ff3df0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .neon-border {
+    @apply border border-white/10;
+    box-shadow: 0 0 0 1px rgba(34,224,255,0.15) inset, 0 0 24px rgba(155,92,255,0.10);
+  }
+  .glass {
+    @apply bg-white/[0.03] backdrop-blur-md;
+  }
+  .btn-neon {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold tracking-wide transition;
+    @apply min-h-[44px] text-sm sm:text-base;
+    background: linear-gradient(90deg, rgba(34,224,255,0.15), rgba(155,92,255,0.18), rgba(255,61,240,0.18));
+    border: 1px solid rgba(155,92,255,0.45);
+    box-shadow: 0 0 0 1px rgba(34,224,255,0.15) inset, 0 0 24px rgba(155,92,255,0.25);
+    color: #fff;
+  }
+  .btn-neon:hover {
+    box-shadow: 0 0 0 1px rgba(255,61,240,0.45) inset, 0 0 28px rgba(255,61,240,0.45);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition min-h-[44px] text-sm sm:text-base;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #e8e8f4;
+  }
+  .btn-ghost:hover { border-color: rgba(34,224,255,0.6); color: #22e0ff; }
+
+  .card {
+    @apply rounded-2xl p-5 sm:p-6 neon-border glass transition;
+  }
+  .card:hover { box-shadow: 0 0 0 1px rgba(255,61,240,0.25) inset, 0 0 30px rgba(155,92,255,0.25); }
+
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/80;
+  }
+}
+
+.scanline::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.02) 0,
+    rgba(255,255,255,0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
