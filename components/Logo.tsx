@@ -18,9 +18,9 @@ export function Logo({
   priority,
   withLink = true,
 }: Props) {
-  const src = variant === "full" ? "/logo.png" : "/logo-mark.png";
-  const w = width ?? (variant === "full" ? 480 : 80);
-  const h = height ?? (variant === "full" ? 360 : 80);
+  const src = variant === "full" ? "/logo.svg" : "/logo-mark.svg";
+  const w = width ?? (variant === "full" ? 240 : 80);
+  const h = height ?? (variant === "full" ? 120 : 80);
 
   const img = (
     <Image
