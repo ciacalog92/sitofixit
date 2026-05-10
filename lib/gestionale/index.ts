@@ -23,7 +23,9 @@ export function getGestionale(): GestionaleAdapter {
   if (driver === "rest") return restAdapter;
 
   if (process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY)) {
+      (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+       process.env.SUPABASE_SERVICE_ROLE_KEY ||
+       process.env.SUPABASE_ANON_KEY)) {
     return supabaseAdapter;
   }
   if (process.env.REPAIRDESK_API_KEY) return repairdeskAdapter;

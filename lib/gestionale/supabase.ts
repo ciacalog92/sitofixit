@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "../supabase";
 import { buildStages, STAGE_DEFS } from "./stages";
 import type { GestionaleAdapter, Grade, RefurbishedPhone, Ticket } from "./types";
 
@@ -96,20 +96,10 @@ function gradeOf(v: unknown): Grade {
   return "A";
 }
 
-function getSupabaseClient() {
-  const url = env("NEXT_PUBLIC_SUPABASE_URL");
-  const key = env("SUPABASE_SERVICE_ROLE_KEY") || env("SUPABASE_ANON_KEY");
-  if (!url || !key) throw new Error("Supabase non configurato (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY mancanti).");
-  return createClient(url, key, { auth: { persistSession: false } });
-}
-
 export const supabaseAdapter: GestionaleAdapter = {
   name: "supabase",
 
   async getTicket(code) {
-    let supabase;
-    try { supabase = getSupabaseClient(); } catch { return null; }
-
     const { data, error } = await supabase
       .from(TICKETS_TABLE)
       .select("*")
@@ -132,9 +122,6 @@ export const supabaseAdapter: GestionaleAdapter = {
   },
 
   async listRefurbished() {
-    let supabase;
-    try { supabase = getSupabaseClient(); } catch { return []; }
-
     const { data, error } = await supabase
       .from(REFURB_TABLE)
       .select("*")
