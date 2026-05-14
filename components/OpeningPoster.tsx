@@ -18,12 +18,12 @@ export function OpeningPoster() {
 
       <div className="container-page relative py-16 sm:py-20 lg:py-24">
         {/* Header poster — logo allineato a sinistra */}
-        <header className="flex flex-col items-start text-left">
+        <header className="flex flex-col items-center text-center">
           <Logo
             variant="full"
             priority
             withLink={false}
-            className="w-full max-w-xs sm:max-w-md h-auto"
+            className="w-full max-w-sm sm:max-w-xl h-auto"
           />
           <p className="mt-2 text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] text-neon-cyan">
             Ripariamo, velocemente, con cura.
