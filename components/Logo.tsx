@@ -10,6 +10,12 @@ type Props = {
   withLink?: boolean;
 };
 
+// Asset reali:
+//   /logo.png       → 1996×459  (≈ 4.35:1)  — wordmark completo
+//   /logo-mark.png  →  527×527  (1:1)       — solo simbolo (smartphone + anelli)
+const FULL = { src: "/logo.png", w: 1996, h: 459 };
+const MARK = { src: "/logo-mark.png", w: 527, h: 527 };
+
 export function Logo({
   variant = "full",
   className = "",
@@ -18,14 +24,14 @@ export function Logo({
   priority,
   withLink = true,
 }: Props) {
-  const src = variant === "full" ? "/logo.svg" : "/logo-mark.svg";
-  const w = width ?? (variant === "full" ? 360 : 80);
-  const h = height ?? (variant === "full" ? 160 : 80);
+  const asset = variant === "full" ? FULL : MARK;
+  const w = width ?? asset.w;
+  const h = height ?? asset.h;
 
   const img = (
     <Image
-      src={src}
-      alt="Fixit Repair Express"
+      src={asset.src}
+      alt="Fixit Repair"
       width={w}
       height={h}
       priority={priority}
@@ -37,7 +43,7 @@ export function Logo({
   return (
     <Link
       href="/"
-      aria-label="Home Fixit Repair Express"
+      aria-label="Home Fixit Repair"
       className="inline-flex items-center"
     >
       {img}

@@ -21,11 +21,9 @@ export function OpeningPoster() {
         <header className="flex flex-col items-center text-center">
           <Logo
             variant="full"
-            width={720}
-            height={320}
             priority
             withLink={false}
-            className="w-full max-w-xs sm:max-w-md h-auto"
+            className="w-full max-w-sm sm:max-w-xl h-auto"
           />
           <p className="mt-2 text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] text-neon-cyan">
             Ripariamo, velocemente, con cura.

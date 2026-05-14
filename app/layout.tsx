@@ -12,15 +12,18 @@ export const metadata: Metadata = {
   description:
     "Fixit Repair Express: riparazioni rapide di smartphone e tablet, accessori premium, smartphone ricondizionati garantiti e tracking in tempo reale dello stato lavorazioni.",
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/favicon.svg" }],
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/favicon-192.png", sizes: "192x192" }],
   },
   openGraph: {
     title: "Fixit Repair Express",
     description:
       "Riparazioni, accessori, ricondizionati e stato lavorazioni in tempo reale.",
     type: "website",
-    images: ["/logo.svg"],
+    images: ["/logo.png"],
   },
 };
 
