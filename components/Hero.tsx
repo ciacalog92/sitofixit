@@ -22,7 +22,7 @@ export function Hero() {
               <span className="text-white">Velocemente. Garantito.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base sm:text-lg text-white/70">
-              Smartphone, tablet, console e accessori premium. Ricondizionati
+              Smartphone, tablet, computer e console. Ricondizionati
               certificati e tracking riparazioni in tempo reale, collegato
               direttamente al nostro gestionale.
             </p>

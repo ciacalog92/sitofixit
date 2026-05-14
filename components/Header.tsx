@@ -6,7 +6,6 @@ import { Logo } from "./Logo";
 
 const NAV = [
   { href: "/riparazioni", label: "Riparazioni" },
-  { href: "/accessori", label: "Accessori" },
   { href: "/ricondizionati", label: "Ricondizionati" },
   { href: "/stato-lavorazioni", label: "Stato Lavorazioni" },
   { href: "/prenota", label: "Prenota" },
@@ -17,11 +16,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-xl">
-      <div className="container-page flex h-16 items-center justify-between gap-4">
+      <div className="container-page flex h-16 items-center gap-4">
         <Logo variant="mark" priority className="sm:hidden h-10 w-10" />
         <Logo variant="full" priority className="hidden sm:block h-12 w-auto" />
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="ml-auto hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -31,16 +30,13 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link href="/prenota" className="btn-neon ml-2 px-4 py-2 text-sm">
-            Prenota riparazione
-          </Link>
         </nav>
 
         <button
           aria-label="Apri menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 text-white/80"
+          className="ml-auto lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 text-white/80"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             {open ? (
@@ -72,13 +68,6 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/prenota"
-              onClick={() => setOpen(false)}
-              className="btn-neon mt-2"
-            >
-              Prenota la tua riparazione
-            </Link>
           </nav>
         </div>
       )}

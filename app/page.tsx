@@ -6,7 +6,6 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { ServiceCard } from "@/components/ServiceCard";
 import {
   ToolIcon,
-  HeadphonesIcon,
   RecycleIcon,
   SearchIcon,
   ShieldIcon,
@@ -27,23 +26,16 @@ export default function HomePage() {
         <SectionHeading
           eyebrow="Cosa facciamo"
           title="Servizi su misura per il tuo device"
-          subtitle="Dalla riparazione al ricondizionato, dagli accessori al tracking lavorazioni: tutto in un unico ecosistema premium."
+          subtitle="Dalla riparazione al ricondizionato, dalla prenotazione online al tracking lavorazioni: tutto in un unico ecosistema premium."
         />
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <ServiceCard
             icon={<ToolIcon />}
             title="Riparazioni"
             description="Schermi, batterie, scheda madre, recupero dati. Tecnici certificati e ricambi originali."
             href="/riparazioni"
             accent="cyan"
-          />
-          <ServiceCard
-            icon={<HeadphonesIcon />}
-            title="Accessori"
-            description="Cover, vetri, caricatori, audio premium. Selezione tech curata per ogni device."
-            href="/accessori"
-            accent="violet"
           />
           <ServiceCard
             icon={<RecycleIcon />}

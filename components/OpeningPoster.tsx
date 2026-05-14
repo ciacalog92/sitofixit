@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Logo } from "./Logo";
 import { OpeningCountdown } from "./OpeningCountdown";
 
@@ -18,13 +17,13 @@ export function OpeningPoster() {
       <div className="pointer-events-none absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-neon-violet/30 blur-3xl" />
 
       <div className="container-page relative py-16 sm:py-20 lg:py-24">
-        {/* Header poster */}
-        <header className="flex flex-col items-center text-center">
+        {/* Header poster — logo allineato a sinistra */}
+        <header className="flex flex-col items-start text-left">
           <Logo
             variant="full"
             priority
             withLink={false}
-            className="w-full max-w-sm sm:max-w-xl h-auto"
+            className="w-full max-w-xs sm:max-w-md h-auto"
           />
           <p className="mt-2 text-xs sm:text-sm font-semibold uppercase tracking-[0.3em] text-neon-cyan">
             Ripariamo, velocemente, con cura.
@@ -92,50 +91,6 @@ export function OpeningPoster() {
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* Footer poster: indirizzo + social + CTA */}
-        <div className="mt-12 sm:mt-16 grid gap-8 lg:grid-cols-3 lg:items-center">
-          {/* CTA testuale */}
-          <div>
-            <p className="font-display text-2xl sm:text-3xl font-black neon-text">
-              TI ASPETTIAMO!
-            </p>
-            <p className="mt-2 text-sm sm:text-base text-white/70 max-w-sm">
-              Scopri le offerte di apertura e tante sorprese per te.
-            </p>
-            <Link href="/stato-lavorazioni" className="btn-neon mt-4">
-              Resta aggiornato
-            </Link>
-          </div>
-
-          {/* Indirizzo */}
-          <address className="not-italic flex items-start gap-3 text-white/85">
-            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-neon-cyan">
-              <PinIcon />
-            </span>
-            <div>
-              <p className="text-xs uppercase tracking-widest text-white/50">Dove siamo</p>
-              <p className="mt-1 font-semibold">Via 4 Novembre, 434</p>
-              <p className="text-white/70">53014 Monteroni d&apos;Arbia (SI)</p>
-            </div>
-          </address>
-
-          {/* Social */}
-          <div className="lg:text-right">
-            <p className="text-xs uppercase tracking-widest text-white/50">Seguici su</p>
-            <div className="mt-3 flex gap-3 lg:justify-end">
-              <SocialLink href="https://facebook.com" label="Facebook">
-                <FacebookIcon />
-              </SocialLink>
-              <SocialLink href="https://instagram.com" label="Instagram">
-                <InstagramIcon />
-              </SocialLink>
-              <SocialLink href="https://tiktok.com" label="TikTok">
-                <TikTokIcon />
-              </SocialLink>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -255,60 +210,6 @@ function HeartIcon() {
   return (
     <svg {...baseIcon}>
       <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-    </svg>
-  );
-}
-function PinIcon() {
-  return (
-    <svg {...baseIcon}>
-      <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  );
-}
-
-function SocialLink({
-  href,
-  label,
-  children,
-}: {
-  href: string;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition hover:border-neon-cyan/60 hover:text-neon-cyan"
-    >
-      {children}
-    </a>
-  );
-}
-
-function FacebookIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5h1.7V4.6c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4v2.4H7.6V14h2.7v8h3.2z" />
-    </svg>
-  );
-}
-function InstagramIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-function TikTokIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M19 8.5a6 6 0 0 1-3.7-1.3v7.4a5.4 5.4 0 1 1-5.4-5.4c.3 0 .6 0 .9.1v2.8a2.7 2.7 0 1 0 1.9 2.6V2.5h2.7A4 4 0 0 0 19 5.8v2.7z" />
     </svg>
   );
 }
