@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import {
   sendEmail,
@@ -78,52 +79,57 @@ export async function POST(req: NextRequest) {
     null;
   const ua = req.headers.get("user-agent")?.slice(0, 500) ?? null;
 
-  // Salvataggio nel gestionale (Supabase)
-  const insertPayload = {
+  // Genero l'UUID server-side: così non serve un RETURNING dopo l'insert,
+  // e la policy RLS di SELECT può restare ristretta a service_role +
+  // utenti autenticati del gestionale (anon NON deve poter leggere le
+  // prenotazioni di altri).
+  const id = randomUUID();
+  const marca = trim(body.marca) || null;
+  const modello = trim(body.modello) || null;
+  const data_preferita = trim(body.data_preferita) || null;
+  const fascia_oraria = trim(body.fascia_oraria) || null;
+  const note = trim(body.note) || null;
+
+  const { error } = await supabaseAdmin.from("prenotazioni").insert({
+    id,
     nome,
     cognome,
     email,
     telefono,
     dispositivo_tipo,
-    marca: trim(body.marca) || null,
-    modello: trim(body.modello) || null,
+    marca,
+    modello,
     problema,
-    data_preferita: trim(body.data_preferita) || null,
-    fascia_oraria: trim(body.fascia_oraria) || null,
-    note: trim(body.note) || null,
+    data_preferita,
+    fascia_oraria,
+    note,
     consenso_privacy: consenso,
     origine: "sito_web",
     ip_address: ip,
     user_agent: ua,
-  };
+  });
 
-  const { data, error } = await supabaseAdmin
-    .from("prenotazioni")
-    .insert(insertPayload)
-    .select("id, nome, cognome, email, telefono, dispositivo_tipo, marca, modello, problema, data_preferita, fascia_oraria, note")
-    .single();
-
-  if (error || !data) {
-    console.error("[/api/prenota] insert error:", error?.message);
+  if (error) {
+    console.error("[/api/prenota] insert error:", error.message);
     return NextResponse.json(
       { ok: false, error: "Impossibile salvare la prenotazione. Riprova tra poco." },
       { status: 500 },
     );
   }
 
-  const prenotazione = data as {
-    id: string;
-    nome: string;
-    cognome: string;
-    email: string;
-    telefono: string;
-    dispositivo_tipo: string;
-    marca: string | null;
-    modello: string | null;
-    problema: string;
-    data_preferita: string | null;
-    fascia_oraria: string | null;
-    note: string | null;
+  const prenotazione = {
+    id,
+    nome,
+    cognome,
+    email,
+    telefono,
+    dispositivo_tipo,
+    marca,
+    modello,
+    problema,
+    data_preferita,
+    fascia_oraria,
+    note,
   };
 
   // Notifica email — best-effort, non blocca la risposta in caso di errore.
