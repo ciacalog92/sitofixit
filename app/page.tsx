@@ -151,7 +151,7 @@ export default function HomePage() {
               gratuito. Tracking in tempo reale incluso.
             </p>
             <div className="mt-7 flex flex-col sm:flex-row justify-center gap-3">
-              <Link href="/riparazioni" className="btn-neon">Richiedi preventivo</Link>
+              <Link href="/prenota" className="btn-neon">Prenota riparazione</Link>
               <Link href="/stato-lavorazioni" className="btn-ghost">Verifica stato pratica</Link>
             </div>
           </div>

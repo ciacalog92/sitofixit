@@ -20,6 +20,7 @@ export function Footer() {
             <li><Link href="/accessori" className="hover:text-neon-cyan">Accessori</Link></li>
             <li><Link href="/ricondizionati" className="hover:text-neon-cyan">Ricondizionati</Link></li>
             <li><Link href="/stato-lavorazioni" className="hover:text-neon-cyan">Stato Lavorazioni</Link></li>
+            <li><Link href="/prenota" className="hover:text-neon-cyan">Prenota riparazione</Link></li>
           </ul>
         </div>
 

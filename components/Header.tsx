@@ -9,6 +9,7 @@ const NAV = [
   { href: "/accessori", label: "Accessori" },
   { href: "/ricondizionati", label: "Ricondizionati" },
   { href: "/stato-lavorazioni", label: "Stato Lavorazioni" },
+  { href: "/prenota", label: "Prenota" },
 ];
 
 export function Header() {
@@ -30,8 +31,8 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-          <Link href="/stato-lavorazioni" className="btn-neon ml-2 px-4 py-2 text-sm">
-            Traccia riparazione
+          <Link href="/prenota" className="btn-neon ml-2 px-4 py-2 text-sm">
+            Prenota riparazione
           </Link>
         </nav>
 
@@ -72,11 +73,11 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/stato-lavorazioni"
+              href="/prenota"
               onClick={() => setOpen(false)}
               className="btn-neon mt-2"
             >
-              Traccia la tua riparazione
+              Prenota la tua riparazione
             </Link>
           </nav>
         </div>
