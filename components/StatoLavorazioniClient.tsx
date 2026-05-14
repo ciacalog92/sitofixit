@@ -61,47 +61,45 @@ export function StatoLavorazioniClient() {
 
   return (
     <div className="space-y-8">
-      <form
-        onSubmit={onSubmit}
-        className="card flex flex-col gap-4 sm:flex-row sm:items-end"
-        noValidate
-      >
-        <div className="flex-1">
-          <label htmlFor="code" className="block text-sm font-medium text-white/80">
-            Codice pratica
-          </label>
-          <div className="relative mt-2">
-            <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-white/50">
-              <SearchIcon />
-            </span>
-            <input
-              id="code"
-              name="code"
-              type="text"
-              inputMode="text"
-              autoComplete="off"
-              autoCapitalize="characters"
-              spellCheck={false}
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="es. FX-2056"
-              className="w-full min-h-[48px] rounded-xl border border-white/10 bg-white/5 pl-11 pr-4 py-3 text-base text-white placeholder:text-white/35 focus:border-neon-cyan/60 focus:outline-none focus:ring-2 focus:ring-neon-cyan/40"
-              aria-invalid={!!error}
-              aria-describedby={error ? "code-error" : "code-hint"}
-            />
+      <form onSubmit={onSubmit} className="card" noValidate>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+          <div className="flex-1">
+            <label htmlFor="code" className="block text-sm font-medium text-white/80">
+              Codice pratica
+            </label>
+            <div className="relative mt-2">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-white/50">
+                <SearchIcon />
+              </span>
+              <input
+                id="code"
+                name="code"
+                type="text"
+                inputMode="text"
+                autoComplete="off"
+                autoCapitalize="characters"
+                spellCheck={false}
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                placeholder="es. LAB-2026-0011"
+                className="block w-full h-12 rounded-xl border border-white/10 bg-white/5 pl-11 pr-4 text-base text-white placeholder:text-white/35 focus:border-neon-cyan/60 focus:outline-none focus:ring-2 focus:ring-neon-cyan/40"
+                aria-invalid={!!error}
+                aria-describedby={error ? "code-error" : "code-hint"}
+              />
+            </div>
           </div>
-          <p id="code-hint" className="mt-2 text-xs text-white/50">
-            Formato: FX-XXXX. Lo trovi sulla ricevuta o nell&apos;email di
-            apertura pratica.
-          </p>
+          <button
+            type="submit"
+            disabled={loading || code.trim().length === 0}
+            className="btn-neon h-12 w-full shrink-0 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Verifica…" : "Verifica stato"}
+          </button>
         </div>
-        <button
-          type="submit"
-          disabled={loading || code.trim().length === 0}
-          className="btn-neon w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? "Verifica…" : "Verifica stato"}
-        </button>
+        <p id="code-hint" className="mt-3 text-xs text-white/50">
+          Formato: LAB-AAAA-NNNN. Lo trovi sulla ricevuta o nell&apos;email di
+          apertura pratica.
+        </p>
       </form>
 
       {error && (
