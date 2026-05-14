@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { OpeningCountdown } from "./OpeningCountdown";
 
 /**
  * Poster "Prossima Apertura" ricostruito in codice (no immagini).
@@ -47,6 +48,9 @@ export function OpeningPoster() {
             </span>
             <span aria-hidden className="h-px w-6 sm:w-10 bg-gradient-to-l from-transparent to-neon-pink" />
           </div>
+
+          {/* Countdown all'apertura */}
+          <OpeningCountdown />
         </div>
 
         {/* Servizi */}
