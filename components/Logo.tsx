@@ -11,10 +11,10 @@ type Props = {
 };
 
 // Asset reali:
-//   /logo.png       → 1996×459  (≈ 4.35:1)  — wordmark completo
-//   /logo-mark.png  →  527×527  (1:1)       — solo simbolo (smartphone + anelli)
-const FULL = { src: "/logo.png", w: 1996, h: 459 };
-const MARK = { src: "/logo-mark.png", w: 527, h: 527 };
+//   /logo.png       → 2048×471  (≈ 4.35:1)  — wordmark completo
+//   /logo-mark.png  →  404×404  (1:1)       — solo simbolo (smartphone + anelli)
+const FULL = { src: "/logo.png", w: 2048, h: 471 };
+const MARK = { src: "/logo-mark.png", w: 404, h: 404 };
 
 export function Logo({
   variant = "full",
