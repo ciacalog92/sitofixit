@@ -29,20 +29,39 @@ import type {
 // Le 8 fasi della UI sono:
 //  0 ricezione · 1 diagnosi · 2 preventivo · 3 approvato
 //  4 in riparazione · 5 qc · 6 pronto · 7 consegnato
+// Enum DB `stato_riparazione`:
+//   accettato | in_diagnosi | in_riparazione | in_attesa_ricambi
+//   | pronto | consegnato | non_riparabile | annullato
 const STATO_TO_INDEX: Record<string, number> = {
+  // ── Accettazione / ricezione
+  accettato: 0,
   in_attesa: 0,
   ricevuto: 0,
+
+  // ── Diagnosi
   in_diagnosi: 1,
   diagnosi: 1,
+
+  // ── Preventivo / approvazione (non in enum DB ma supportati per compat)
   preventivo: 2,
   preventivato: 2,
   approvato: 3,
+
+  // ── Riparazione in corso (incluso attesa ricambi: per il cliente è "in lavorazione")
   in_riparazione: 4,
   in_lavorazione: 4,
+  in_attesa_ricambi: 4,
+
+  // ── QC / test
   in_test: 5,
+
+  // ── Pronto al ritiro
   pronto: 6,
+
+  // ── Consegnato
   consegnato: 7,
-  // stati terminali speciali (gestiti via outcome, l'indice è solo indicativo)
+
+  // ── Stati terminali speciali (gestiti via outcome, l'indice è solo indicativo)
   non_riparabile: 1,
   annullato: 0,
 };
