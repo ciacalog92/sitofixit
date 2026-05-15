@@ -17,8 +17,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-xl">
       <div className="container-page flex h-16 items-center gap-4">
-        <Logo variant="mark" priority className="sm:hidden h-10 w-10" />
-        <Logo variant="full" priority className="hidden sm:block h-12 w-auto" />
+        <Logo variant="full" priority className="h-9 sm:h-12 w-auto" />
 
         <nav className="ml-auto hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
