@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { PromoBanner } from "@/components/PromoBanner";
-import { OpeningPoster } from "@/components/OpeningPoster";
 import { Hero } from "@/components/Hero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ServiceCard } from "@/components/ServiceCard";
@@ -18,7 +17,6 @@ export default function HomePage() {
   return (
     <>
       <PromoBanner />
-      <OpeningPoster />
       <Hero />
 
       {/* Sezioni servizi */}
