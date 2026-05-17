@@ -4,9 +4,10 @@ import { Logo } from "./Logo";
 export function Footer() {
   return (
     <footer className="mt-20 border-t border-white/5 bg-black/60">
-      <div className="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="container-page grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:items-start">
         {/* Brand + tagline + social */}
         <div className="space-y-4">
+          <h4 className="text-sm font-semibold text-white/90">Brand</h4>
           <Logo variant="full" className="h-16 w-auto" />
           <p className="text-sm text-white/60 max-w-xs">
             Riparazioni rapide e smartphone ricondizionati con garanzia.
@@ -45,7 +46,7 @@ export function Footer() {
           <h4 className="text-sm font-semibold text-white/90">Dove siamo</h4>
           <address className="not-italic mt-3 text-sm text-white/70 space-y-1">
             <p className="text-white/85 font-medium">Fixit Repair Express</p>
-            <p>Via A. Fabbri, 54</p>
+            <p>Via IV Novembre, 343</p>
             <p>53014 Monteroni d&apos;Arbia (SI)</p>
           </address>
           <p className="mt-4 text-xs uppercase tracking-widest text-white/50">Orari</p>
@@ -56,12 +57,19 @@ export function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-white/90">Info aziendali</h4>
           <dl className="mt-3 space-y-2 text-sm text-white/70">
+            <Pair label="Email">
+              <a
+                href="mailto:fixitrepairexpress@fixitrepairexpress.com"
+                className="hover:text-neon-cyan"
+              >
+                fixitrepairexpress@fixitrepairexpress.com
+              </a>
+            </Pair>
             <Pair label="PEC">
               <a href="mailto:fixitrepairexpress@pec.it" className="hover:text-neon-cyan">
                 fixitrepairexpress@pec.it
               </a>
             </Pair>
-            <Pair label="C.F.">SCCNTN89S22G793P</Pair>
             <Pair label="P. IVA">01632410526</Pair>
           </dl>
         </div>
