@@ -45,7 +45,7 @@ export default function PrenotaPage() {
 
           <div className="card">
             <p className="text-xs uppercase tracking-widest text-white/50">Dove siamo</p>
-            <p className="mt-2 font-semibold text-white">Via 4 Novembre, 434</p>
+            <p className="mt-2 font-semibold text-white">Via 4 Novembre, 343</p>
             <p className="text-sm text-white/65">53014 Monteroni d&apos;Arbia (SI)</p>
             <p className="mt-3 text-xs uppercase tracking-widest text-white/50">Orari</p>
             <p className="mt-2 text-sm text-white/80">Lun–Sab · 9:30 — 19:30</p>

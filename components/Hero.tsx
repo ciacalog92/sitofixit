@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Logo } from "./Logo";
 
 export function Hero() {
   return (
@@ -45,11 +44,21 @@ export function Hero() {
           <div className="relative">
             <div className="relative mx-auto aspect-square w-full max-w-md">
               <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-neon-cyan/20 via-neon-violet/20 to-neon-pink/20 blur-2xl" />
-              <div className="relative h-full w-full rounded-[2rem] neon-border glass p-6 sm:p-10 flex items-center justify-center scanline overflow-hidden">
-                <Logo variant="full" className="w-full h-auto max-w-md sm:max-w-lg animate-pulseNeon" priority withLink={false} />
+              <div className="relative h-full w-full rounded-[2rem] neon-border glass flex items-center justify-center scanline overflow-hidden">
+                <video
+                  className="h-full w-full object-cover"
+                  src="/hero-repair.mp4"
+                  poster="/hero-repair-poster.jpg"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label="Riparazione in corso nel laboratorio Fixit"
+                />
               </div>
               <div className="pointer-events-none absolute -bottom-4 -right-4 hidden sm:block">
-                <span className="chip backdrop-blur">Premium · Tech</span>
+                <span className="chip backdrop-blur">Live · Laboratorio</span>
               </div>
             </div>
           </div>

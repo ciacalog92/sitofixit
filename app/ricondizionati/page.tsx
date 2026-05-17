@@ -119,13 +119,6 @@ export default async function RicondizionatiPage() {
           </div>
         )}
 
-        <div className="mt-10 rounded-2xl neon-border glass p-6 sm:p-8 text-center">
-          <p className="text-white/80">
-            Hai un vecchio smartphone? <span className="neon-text font-semibold">Lo ritiriamo</span> e lo
-            valuti subito.
-          </p>
-          <Link href="#" className="btn-neon mt-4 inline-flex">Valuta il tuo usato</Link>
-        </div>
       </section>
     </>
   );
