@@ -244,28 +244,41 @@ export const supabaseAdapter: GestionaleAdapter = {
   },
 
   async listRefurbished() {
-    // Tabella opzionale: se non esiste, restituisco lista vuota.
+    // Tabella reale: prodotti_shop (schema gestionale_1)
+    // Colonne: nome, marca, modello, colore, storage,
+    //   grado_estetico (A+/A/B/C), prezzo_vendita_euro,
+    //   stato (disponibile/venduto/riservato), foto_urls (jsonb[])
     const { data, error } = await supabase
-      .from("ricondizionati")
-      .select("*")
-      .eq("disponibile", true);
+      .from("prodotti_shop")
+      .select(
+        "id, marca, modello, colore, storage, grado_estetico, prezzo_vendita_euro, foto_urls",
+      )
+      .eq("stato", "disponibile")
+      .order("created_at", { ascending: false });
 
     if (error || !data) return [];
 
     return data.map((r): RefurbishedPhone => {
-      const price = Number(r.prezzo ?? r.price ?? 0);
-      const grade = String(r.grado ?? r.grade ?? "A").toUpperCase().replace(/\s+/g, "");
+      const price = Number(r.prezzo_vendita_euro ?? 0);
+      const rawGrade = String(r.grado_estetico ?? "A").toUpperCase().replace(/\s+/g, "");
+      const grade: Grade = rawGrade === "A+" ? "A+" : rawGrade === "B" || rawGrade === "C" ? "B" : "A";
+
+      // foto_urls è jsonb array di URL pubblici (Supabase Storage)
+      const photos = Array.isArray(r.foto_urls) ? r.foto_urls : [];
+      const firstPhoto =
+        typeof photos[0] === "string" ? photos[0] : null;
+
       return {
         id: String(r.id ?? crypto.randomUUID()),
-        brand: String(r.brand ?? r.marca ?? "—"),
-        model: String(r.modello ?? r.model ?? "—"),
+        brand: String(r.marca ?? "—"),
+        model: String(r.modello ?? "—"),
         storage: String(r.storage ?? ""),
-        color: r.colore || r.color || undefined,
+        color: r.colore || undefined,
         price: Number.isFinite(price) ? price : 0,
         priceLabel: price ? `€ ${Math.round(price)}` : undefined,
-        grade: (grade === "A+" ? "A+" : grade === "B" ? "B" : "A") as Grade,
-        battery: String(r.batteria ?? r.battery ?? "—"),
-        imageUrl: r.immagine_url ?? r.image_url ?? null,
+        grade,
+        battery: "—",
+        imageUrl: firstPhoto,
         available: true,
       };
     });

@@ -99,7 +99,9 @@ export default async function RicondizionatiPage() {
                   <span className={`absolute left-3 top-3 chip border ${GRADE_STYLE[p.grade]}`}>
                     Grado {p.grade}
                   </span>
-                  <span className="absolute right-3 top-3 chip text-[11px]">Batteria {p.battery}</span>
+                  {p.battery && p.battery !== "—" && (
+                    <span className="absolute right-3 top-3 chip text-[11px]">Batteria {p.battery}</span>
+                  )}
                 </div>
                 <div className="mt-4 flex flex-1 flex-col">
                   <p className="text-xs uppercase tracking-wider text-white/50">{p.brand}</p>
