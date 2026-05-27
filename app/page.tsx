@@ -81,49 +81,53 @@ export default function HomePage() {
             </ul>
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-neon-cyan/15 via-neon-violet/15 to-neon-pink/15 blur-2xl" />
-            <div className="relative card overflow-hidden">
-              <div className="flex items-center justify-between">
-                <span className="chip">
-                  <span className="h-1.5 w-1.5 rounded-full bg-neon-cyan animate-pulseNeon" />
-                  Live · Gestionale
-                </span>
-                <span className="text-xs text-white/50">FX-2056</span>
-              </div>
-              <div className="mt-5 space-y-4">
-                {[
-                  { t: "Ricezione device", done: true },
-                  { t: "Diagnosi tecnica", done: true },
-                  { t: "Approvazione preventivo", done: true },
-                  { t: "Riparazione in corso", done: false, active: true },
-                  { t: "Test finale & QC", done: false },
-                  { t: "Pronto per il ritiro", done: false },
-                ].map((s) => (
-                  <div key={s.t} className="flex items-center gap-3">
-                    <span
-                      className={`h-3 w-3 rounded-full ${
-                        s.done
-                          ? "bg-neon-cyan shadow-neon-cyan"
-                          : s.active
-                          ? "bg-neon-pink shadow-neon-pink animate-pulseNeon"
-                          : "bg-white/15"
-                      }`}
-                    />
-                    <span
-                      className={`text-sm ${
-                        s.done || s.active ? "text-white" : "text-white/55"
-                      }`}
-                    >
-                      {s.t}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <Link href="/stato-lavorazioni" className="btn-neon mt-6 w-full">
-                Apri tracking lavorazioni
-              </Link>
+          <div className="card overflow-hidden">
+            <div className="flex items-center justify-between">
+              <span className="chip">
+                <span className="h-1.5 w-1.5 rounded-full bg-neon-cyan animate-pulseNeon" />
+                Live · Gestionale
+              </span>
+              <span className="text-xs text-white/50">FX-2056</span>
             </div>
+            <ul className="mt-5 space-y-3">
+              {[
+                { t: "Ricezione device", done: true },
+                { t: "Diagnosi tecnica", done: true },
+                { t: "Approvazione preventivo", done: true },
+                { t: "Riparazione in corso", done: false, active: true },
+                { t: "Test finale & QC", done: false },
+                { t: "Pronto per il ritiro", done: false },
+              ].map((s) => (
+                <li key={s.t} className="flex items-center gap-3">
+                  <span
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${
+                      s.done
+                        ? "border-neon-cyan/60 bg-neon-cyan/10 text-neon-cyan"
+                        : s.active
+                        ? "border-neon-pink/70 bg-neon-pink/10 text-neon-pink animate-pulseNeon"
+                        : "border-white/15 bg-white/5 text-white/40"
+                    }`}
+                  >
+                    {s.done ? (
+                      <CheckIcon width={12} height={12} />
+                    ) : (
+                      <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                    )}
+                  </span>
+                  <span className={`text-sm ${s.done || s.active ? "text-white" : "text-white/45"}`}>
+                    {s.t}
+                  </span>
+                  {s.active && (
+                    <span className="ml-auto text-[11px] uppercase tracking-wider text-neon-pink">
+                      In corso
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <Link href="/stato-lavorazioni" className="btn-neon mt-6 w-full">
+              Apri tracking lavorazioni
+            </Link>
           </div>
         </div>
       </section>
