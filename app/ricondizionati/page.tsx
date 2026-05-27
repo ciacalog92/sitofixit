@@ -113,7 +113,7 @@ export default async function RicondizionatiPage() {
                     <span className="text-xl font-bold neon-text">
                       {p.priceLabel ?? `€ ${Math.round(p.price)}`}
                     </span>
-                    <Link href="#" className="btn-ghost py-2 px-3 text-xs sm:text-sm">Dettagli</Link>
+                    <a href="tel:+393342018041" className="btn-ghost py-2 px-3 text-xs sm:text-sm">Prenota</a>
                   </div>
                 </div>
               </article>
